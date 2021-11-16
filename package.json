@@ -8,8 +8,22 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Ricardo Andrés Calvo Méndez",
   "license": "ISC",
   "devDependencies": {},
-  "description": ""
+  "description": "Microservicio para la atencion al usuario",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CrowStream/support-ms.git"
+  },
+  "keywords": [
+    "Express",
+    "Support",
+    "Chatbot",
+    "HelpDesk"
+  ],
+  "bugs": {
+    "url": "https://github.com/CrowStream/support-ms/issues"
+  },
+  "homepage": "https://github.com/CrowStream/support-ms#readme"
 }
