@@ -1,7 +1,7 @@
 const express = require('express')
 const { dbConnection } = require('../database/config')
 
-class server {
+class Server {
     constructor(){
         // Setup.
         this.port = process.env.PORT;
@@ -15,8 +15,8 @@ class server {
     }
 
     routes(){
-        app.get('/', (req, res) => {
-            res.send('Hello World!');
+        this.app.get('/ping', (req, res) => {
+            res.send('Pong!');
         });
     }
 

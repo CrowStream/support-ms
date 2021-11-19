@@ -4,10 +4,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --production --silent && mv node_modules ../
 
 COPY . .
 
 EXPOSE 3000
 
-CMD [ "node", "app.js" ]
+CMD npm start
