@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+
+    #expressjs:
+    #  build:
+    #    context: .
+    #    dockerfile: Dockerfile
+    #  image: nodejs
+    #  container_name: support-ms
+    #  restart: unless-stopped
+    #  env_file: .env
+    #  ports: 3000:3000
+
+    mongo:
+        image: mongo:4.4.10
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+
+    mongo-express:
+        image: mongo-express
+        restart: always
+        environment:
+            - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_ROOT_USER}
+            - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_ROOT_PASSWORD}
+            - ME_CONFIG_MONGODB_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+        depends_on:
+            - mongo
+        ports:
+          - "8081:8081"
