@@ -1,28 +1,36 @@
+var ping = require('express-ping');
 const express = require('express')
 const { dbConnection } = require('../database/config')
 
 class Server {
     constructor(){
-        // Setup.
+        // Setup
         this.port = process.env.PORT;
         this.app = express();
 
-        // Database initialization.
+        // Database initialization
         this.databaseConnection();
 
-        // Routes initialization.
+        // Middelware initialization
+        this.middlewares();
+
+        // Routes initialization
         this.routes();
     }
 
+    middlewares(){
+        this.app.use(express.json());
+    }
+
     routes(){
-        this.app.get('/ping', (req, res) => {
-            res.send('Pong!');
-        });
+        this.app.use(ping.ping());
+        this.app.use('/posts', require('../routes/post'));
+        this.app.use('/comments', require('../routes/comment'));
     }
 
     start(){
         this.app.listen(this.port, () => {
-            console.log('Example app listening at http://localhost:' + this.port)
+            console.log('Example app listening at port: ' + this.port)
         })
     }
 

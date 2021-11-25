@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const dbConnection = async() => {
     try {
-        await mongoose.connect('mongodb://root:pass@mongo:27017/', {
+        await mongoose.connect(process.env.MONGO_ROOT_URL, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            dbName: 'support_db'
         });
         console.log('Database initializated.');
     } catch (error) {

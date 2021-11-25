@@ -1,6 +1,6 @@
 const { Schema, model } = require('moongose')
 
-const ExampleSchema = Schema({
+const PostSchema = Schema({
     field: {
         type: String,
         require: [true, 'El nombre es obligatorio']
@@ -8,4 +8,4 @@ const ExampleSchema = Schema({
 });
 
 
-module.exports = model('Examples', ExampleSchema)
+module.exports = model('Posts', PostSchema)
