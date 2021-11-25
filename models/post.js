@@ -1,11 +1,25 @@
-const { Schema, model } = require('moongose')
+const { Schema, model } = require('mongoose');
 
 const PostSchema = Schema({
-    field: {
+    user_id: {
         type: String,
-        require: [true, 'El nombre es obligatorio']
+        required: [true, 'user_id must be provided']
+    },
+    description: {
+        type: String,
+        required: [true, 'description must be provided']
+    },
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    }],
+    files: [{
+        type: String,
+    }],
+    __v: { 
+        type: Number, 
+        select: false
     }
 });
 
-
-module.exports = model('Posts', PostSchema)
+module.exports = model('Post', PostSchema)

@@ -1,8 +1,9 @@
 const { Schema, model } = require('mongoose');
 
 const CommentSchema = Schema({
-    id: {
-        type: Schema.Types.ObjectId
+    post_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Post'
     },
     user_id: {
         type: String,
@@ -12,7 +13,13 @@ const CommentSchema = Schema({
         type: String,
         require: [true, 'description must be provided']
     },
-    files: [String]
+    files: [{
+        type: String,
+    }],
+    __v: { 
+        type: Number, 
+        select: false
+    }
 });
 
 

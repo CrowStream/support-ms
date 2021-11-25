@@ -1,12 +1,12 @@
 const { request, response } = require('express');
-const Post = require('../models/post');
+const Support_response = require('../models/support_response');
 
-const get_all_posts = (req = request, res = response) => {
+const get_all_support_responses = (req = request, res = response) => {
     var filters = {} //TODO: Filters
-    Post.find(filters)
-        .then((posts) => {
+    Support_response.find(filters)
+        .then((support_responses) => {
             res.status(200).json(
-                posts
+                support_responses
             );
         }).catch((err) =>{
             res.status(500).json(
@@ -15,16 +15,16 @@ const get_all_posts = (req = request, res = response) => {
         });
 }
 
-const get_post = (req = request, res = response) => {
-    Post.findById(req.params.id)
-        .then((post) => {
-            if(post == null){
+const get_support_response = (req = request, res = response) => {
+    Support_response.findById(req.params.id)
+        .then((support_response) => {
+            if(support_response == null){
                 res.status(400).json(
                     "msg": "Element not found"
                 );
             }else{
                 res.status(200).json(
-                    post
+                    support_response
                 );
             }
         }).catch((err) =>{
@@ -40,11 +40,11 @@ const get_post = (req = request, res = response) => {
         });
 }
 
-const create_post = (req = request, res = response) => {
-    Post.create(req.body)
-        .then((post) => {
+const create_support_response = (req = request, res = response) => {
+    Support_response.create(req.body)
+        .then((support_response) => {
             res.status(201).json(
-                post
+                support_response
             );
         }).catch((err) =>{
             if(err.name == 'ValidationError'){
@@ -59,13 +59,13 @@ const create_post = (req = request, res = response) => {
         });
 }
 
-const update_post = (req = request, res = response) => {
-    Post.findByIdAndUpdate(req.params.id, req.body)
-        .then((post) => {
-            Post.findById(req.params.id)
-                .then((post) => {
+const update_support_response = (req = request, res = response) => {
+    Support_response.findByIdAndUpdate(req.params.id, req.body)
+        .then((support_response) => {
+            Support_response.findById(req.params.id)
+                .then((support_response) => {
                     res.status(200).json(
-                        post
+                        support_response
                     );
                 })
         }).catch((err) =>{
@@ -81,10 +81,10 @@ const update_post = (req = request, res = response) => {
         });
 }
 
-const remove_post = (req = request, res = response) => {
-    Post.findByIdAndDelete(req.params.id)
-        .then((post) => {
-            if(post == null){
+const remove_support_response = (req = request, res = response) => {
+    Support_response.findByIdAndDelete(req.params.id)
+        .then((support_response) => {
+            if(support_response == null){
                 res.status(204).json();
             }else{
                 res.status(400).json(
@@ -106,9 +106,9 @@ const remove_post = (req = request, res = response) => {
 
 
 module.exports = {
-    get_all_posts,
-    get_post,
-    create_post,
-    update_post,
-    remove_post
+    get_all_support_responses,
+    get_support_response,
+    create_support_response,
+    update_support_response,
+    remove_support_response
 }

@@ -1,26 +1,114 @@
 const { request, response } = require('express');
-const comment = require('../models/comment');
+const Comment = require('../models/comment');
 
-const get_comment = (req = request, res = response) => {
-    const id = request.params.id;
-    res.json({
-        "msg": "test",
-        "id": id
-    });
+const get_all_comments = (req = request, res = response) => {
+    var filters = {} //TODO: Filters
+    Comment.find(filters)
+        .then((comments) => {
+            res.status(200).json(
+                comments
+            );
+        }).catch((err) =>{
+            res.status(500).json(
+                err
+            );
+        });
 }
 
-const post_comment = async (req = request, res = response) => {
-    const body = req.body;
-    const c = new comment();
+const get_comment = (req = request, res = response) => {
+    Comment.findById(req.params.id)
+        .then((comment) => {
+            if(comment == null){
+                res.status(400).json(
+                    "msg": "Element not found"
+                );
+            }else{
+                res.status(200).json(
+                    comment
+                );
+            }
+        }).catch((err) =>{
+            if(err.name == 'CastError'){
+                res.status(400).json(
+                    err
+                );
+            }else{
+                res.status(500).json(
+                    err
+                );
+            }
+        });
+}
 
-    await c.save();
+const create_comment = (req = request, res = response) => {
+    Comment.create(req.body)
+        .then((comment) => {
+            res.status(201).json(
+                comment
+            );
+        }).catch((err) =>{
+            if(err.name == 'ValidationError'){
+                res.status(400).json(
+                    err
+                );
+            }else{
+                res.status(500).json(
+                    err
+                );
+            }
+        });
+}
 
-    res.json(c);
+const update_comment = (req = request, res = response) => {
+    Comment.findByIdAndUpdate(req.params.id, req.body)
+        .then((comment) => {
+            Comment.findById(req.params.id)
+                .then((comment) => {
+                    res.status(200).json(
+                        comment
+                    );
+                })
+        }).catch((err) =>{
+            if(err.name == 'CastError'){
+                res.status(400).json(
+                    err
+                );
+            }else{
+                res.status(500).json(
+                    err
+                );
+            }
+        });
+}
 
+const remove_comment = (req = request, res = response) => {
+    Comment.findByIdAndDelete(req.params.id)
+        .then((comment) => {
+            if(comment == null){
+                res.status(204).json();
+            }else{
+                res.status(400).json(
+                    "msg": "Element not found"
+                );
+            }
+        }).catch((err) =>{
+            if(err.name == 'CastError'){
+                res.status(400).json(
+                    err
+                );
+            }else{
+                res.status(500).json(
+                    err
+                );
+            }
+        });
 }
 
 
 module.exports = {
+    get_all_comments,
     get_comment,
-    post_comment
+    create_comment,
+    update_comment,
+    remove_comment
 }
