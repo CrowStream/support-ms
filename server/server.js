@@ -1,6 +1,7 @@
 const ping = require('express-ping');
-const express = require('express')
-const { dbConnection } = require('../database/config')
+const express = require('express');
+const { dbConnection } = require('../database/config');
+const { mqConnection } = require('../messaging/config');
 
 class Server {
     constructor(){
@@ -10,6 +11,9 @@ class Server {
 
         // Database initialization
         this.databaseConnection();
+
+        // Message queue connection
+        this.messageQueueConnection();
 
         // Middelware initialization
         this.middlewares();
@@ -29,14 +33,16 @@ class Server {
 
     start(){
         const server = this.app.listen(this.port, () => {
-            const host = server.address().address;
-            const port = server.address().port;
-            console.log('App listening at http://${host}:${port}');
+            console.log('Support_ms listening at port: ' + this.port);
         });
     }
 
     databaseConnection(){
         dbConnection();
+    }
+
+    messageQueueConnection(){
+        mqConnection();
     }
 }
 

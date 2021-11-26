@@ -1,4 +1,6 @@
+const amqplib = require('amqplib');
 const { Router } = require('express');
+
 const { get_all_posts, get_post, create_post, update_post, remove_post } = require('../controllers/post');
 
 const router = Router();

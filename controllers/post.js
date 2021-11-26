@@ -19,9 +19,9 @@ const get_post = (req = request, res = response) => {
     Post.findById(req.params.id)
         .then((post) => {
             if(post == null){
-                res.status(400).json(
-                    "msg": "Element not found"
-                );
+                res.status(400).json({
+                    "msg": "Element not found"                    
+                });
             }else{
                 res.status(200).json(
                     post
@@ -87,9 +87,9 @@ const remove_post = (req = request, res = response) => {
             if(post == null){
                 res.status(204).json();
             }else{
-                res.status(400).json(
+                res.status(400).json({
                     "msg": "Element not found"
-                );
+                });
             }
         }).catch((err) =>{
             if(err.name == 'CastError'){

@@ -19,9 +19,9 @@ const get_comment = (req = request, res = response) => {
     Comment.findById(req.params.id)
         .then((comment) => {
             if(comment == null){
-                res.status(400).json(
+                res.status(400).json({
                     "msg": "Element not found"
-                );
+                });
             }else{
                 res.status(200).json(
                     comment
@@ -87,9 +87,9 @@ const remove_comment = (req = request, res = response) => {
             if(comment == null){
                 res.status(204).json();
             }else{
-                res.status(400).json(
+                res.status(400).json({
                     "msg": "Element not found"
-                );
+                });
             }
         }).catch((err) =>{
             if(err.name == 'CastError'){

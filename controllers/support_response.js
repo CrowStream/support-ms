@@ -19,9 +19,9 @@ const get_support_response = (req = request, res = response) => {
     Support_response.findById(req.params.id)
         .then((support_response) => {
             if(support_response == null){
-                res.status(400).json(
+                res.status(400).json({
                     "msg": "Element not found"
-                );
+                });
             }else{
                 res.status(200).json(
                     support_response
@@ -87,9 +87,9 @@ const remove_support_response = (req = request, res = response) => {
             if(support_response == null){
                 res.status(204).json();
             }else{
-                res.status(400).json(
+                res.status(400).json({
                     "msg": "Element not found"
-                );
+                });
             }
         }).catch((err) =>{
             if(err.name == 'CastError'){
