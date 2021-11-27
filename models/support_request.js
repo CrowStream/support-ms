@@ -7,7 +7,7 @@ const SupportRequestSchema = Schema({
     },
     request_type: {
         type: String,
-        required: [true, 'request_type must be provided']
+        required: [true, 'request_type must be provided'],
         enum: ['COMPLAIN', 'DOUBT', 'SUGGESTION', 'CLAIM']
     },
     description: {
@@ -17,7 +17,7 @@ const SupportRequestSchema = Schema({
     response_id: {
         type: Schema.Types.ObjectId,
         ref: 'SupportResponse'
-    }
+    },
     files: [{
         type: String,
     }],

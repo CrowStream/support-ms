@@ -4,7 +4,7 @@ const SupportResponseSchema = Schema({
     request_id: {
         type: Schema.Types.ObjectId,
         ref: 'SupportRequest'
-    }
+    },
     responder: {
         type: String,
     },

@@ -3,7 +3,8 @@ const { Schema, model } = require('mongoose');
 const CommentSchema = Schema({
     post_id: {
         type: Schema.Types.ObjectId,
-        ref: 'Post'
+        ref: 'Post',
+        require: [true, 'post_id must be provided']
     },
     user_id: {
         type: String,
@@ -19,7 +20,7 @@ const CommentSchema = Schema({
     __v: { 
         type: Number, 
         select: false
-    }
+    } 
 });
 
 

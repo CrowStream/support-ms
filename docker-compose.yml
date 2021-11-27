@@ -8,13 +8,11 @@ services:
         ports:
             - 5672:5672
             - 15672:15672
-        networks:
-            - crowstream_rabbitmq
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:15672"]
+            test: rabbitmq-diagnostics -q ping
             interval: 30s
-            timeout: 10s
-            retries: 5
+            timeout: 30s
+            retries: 3
 
     support_ms:
         build:
@@ -22,15 +20,14 @@ services:
             dockerfile: dockerfile
         image: crowstream_support_ms
         container_name: crowstream_support_ms
-        depends_on:
-          - crowstream_mq
         env_file: .env
         ports:
             - '3000:3000'
         volumes:
             - .:/urs/src/app
-        networks:
-          - crowstream_rabbitmq
+        depends_on:
+            crowstream_mq:
+                condition: service_healthy        
 
     support_db:
         image: mongo:4.4.10
@@ -42,9 +39,7 @@ services:
             - '27017:27017'
         volumes:
             - support_data:/data/db
-        networks:
-          - crowstream_rabbitmq
-        
+
     mongo-express:
         image: mongo-express
         restart: always
@@ -58,13 +53,6 @@ services:
             - support_db
         ports:
             - '8081:8081'
-        networks:
-          - crowstream_rabbitmq
 
 volumes:
     support_data: null
-
-
-networks:
-  crowstream_rabbitmq:
-    driver: bridge
