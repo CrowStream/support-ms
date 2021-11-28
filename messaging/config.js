@@ -1,8 +1,8 @@
 const amqplib = require('amqplib');
 
 const mqConnection = () => {
-    console.log('Conecting to message queue ' + process.env.MQ_URL)
-    amqplib.connect(process.env.MQ_URL, 'heartbeat=60')
+    console.log('Conecting to message queue ' + process.env.CROWSTREAM_MQ_URL)
+    return amqplib.connect(process.env.CROWSTREAM_MQ_URL, 'heartbeat=60')
         .then((conn) => {
             console.log('Message queue initializated.');
         }).catch((error) => {

@@ -10,8 +10,21 @@ const PostSchema = Schema({
         required: [true, 'description must be provided']
     },
     comments: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Comment'
+        user_id: {
+            type: String,
+            require: [true, 'user_id must be provided']
+        },
+        description: {
+            type: String,
+            require: [true, 'description must be provided']
+        },
+        files: [{
+            type: String,
+        }],
+        __v: { 
+            type: Number, 
+            select: false
+        } 
     }],
     files: [{
         type: String,

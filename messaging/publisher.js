@@ -1,7 +1,7 @@
 const amqplib = require('amqplib');
 
 (async () => {
-    const connection = await amqplib.connect( process.env.MQ_URL, 'heartbeat=60');
+    const connection = await amqplib.connect( process.env.CROWSTREAM_MQ_URL, 'heartbeat=60');
     const channel = await connection.createChannel();
     try {
       console.log('Publishing');

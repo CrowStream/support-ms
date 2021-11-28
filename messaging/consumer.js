@@ -6,7 +6,7 @@ async function processMessage(msg) {
 }
 
 (async () => {
-    const connection = await amqplib.connect( process.env.MQ_URL, "heartbeat=60");
+    const connection = await amqplib.connect( process.env.CROWSTREAM_MQ_URL, "heartbeat=60");
     const channel = await connection.createChannel();
     channel.prefetch(10);
     const queue = 'user.sign_up_email';
