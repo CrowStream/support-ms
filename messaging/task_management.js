@@ -1,21 +1,15 @@
+const amqplib = require('amqplib');
+const { callbackPromise } = require('nodemailer/lib/shared');
 const { mqConnection } = require('../messaging/config');
 
-const connection = mqConnection();
-
-const create_task = async () => {
-    const channel = connection.createChannel();
+const create_task = async (exchange, queue, routingKey, msg) => {
+    const connection = await amqplib.connect(process.env.CROWSTREAM_MQ_URL, 'heartbeat=60');
+    const channel = await connection.createChannel();
     try {
-
-        const exchange = 'user.comment';
-        const queue = 'post.comment';
-        const routingKey = 'comment_notification_email';
-
         await channel.assertExchange(exchange, 'direct', { durable: true });
         await channel.assertQueue(queue, { durable: true });
         await channel.bindQueue(queue, exchange, routingKey);
-
         await channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(msg)));
-
     } catch (e) {
         console.error('Error in publishing message', e);
     } finally {
@@ -25,21 +19,23 @@ const create_task = async () => {
     }
 }
 
-const read_task = async () => {
-    const channel = connection.createChannel();
+const read_task = async (queue, consumerTag, processMessage) => {
+    const connection = await amqplib.connect(process.env.CROWSTREAM_MQ_URL, 'heartbeat=60');
+    const channel = await connection.createChannel();
     channel.prefetch(10);
     process.once('SIGINT', async () => {
         await channel.close();
         await connection.close();
     });
-
     await channel.assertQueue(queue, { durable: true });
     await channel.consume(queue, async (msg) => {
+        await processMessage(msg)
         await channel.ack(msg);
-        return msg;
     },
-    {
-        noAck: false,
-        consumerTag: 'email_reader'
-    });
+        {
+            noAck: false,
+            consumerTag: consumerTag
+        });
 }
+
+module.exports = { create_task, read_task }

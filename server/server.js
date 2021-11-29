@@ -1,7 +1,8 @@
 const ping = require('express-ping');
 const express = require('express');
 const { dbConnection } = require('../database/config');
-const { mqConnection } = require('../messaging/config');
+const { read_task, create_task } = require('../messaging/task_management');
+const { comment_notification } = require('../tasks/comment_notification');
 
 class Server {
     constructor(){
@@ -12,8 +13,8 @@ class Server {
         // Database initialization
         this.databaseConnection();
 
-        // Message queue connection
-        //this.messageQueueConnection();
+        // Tasking initialization
+        this.tasks();
 
         // Middelware initialization
         this.middlewares();
@@ -42,9 +43,11 @@ class Server {
         dbConnection();
     }
 
-    messageQueueConnection(){
-        mqConnection();
+    tasks(){
+        // Read Email Notification Task.
+        read_task('comment.creation', 'comment.creation', comment_notification);
     }
+
 }
 
 module.exports = Server;

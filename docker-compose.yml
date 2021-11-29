@@ -4,7 +4,7 @@ services:
 
     crowstream_mq:
         image: rabbitmq:3.8-management-alpine
-        container_name: 'crowstream_rabbitmq'
+        container_name: crowstream_rabbitmq
         ports:
             - 5672:5672
             - 15672:15672

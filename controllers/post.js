@@ -1,6 +1,6 @@
 const { request, response } = require('express');
 const Post = require('../models/post');
-const Email_sender = require('../utils/email_sender');
+const { create_task } = require('../messaging/task_management');
 
 
 const get_all_posts = (req = request, res = response) => {
@@ -196,7 +196,11 @@ const create_post_comment = (req = request, res = response) => {
             }else{
                 post.comments.push(req.body);
                 post.save();
-                Email_sender.send_email();
+                create_task('comment.creation', 'comment.creation', 'comment.creation', {
+                    to: "rcalvom@unal.edu.co",
+                    subject: "Test EMAIL",
+                    html: "<h1>Hello EMAIL!</h1>"
+                });
                 res.status(200).json(
                     post.comments.at(-1)
                 );
