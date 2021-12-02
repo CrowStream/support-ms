@@ -29,8 +29,8 @@ class Server {
 
     routes(){
         this.app.use(ping.ping());
-        this.app.use('/posts', require('../routes/post'));
-        this.app.use('/support_request', require('../routes/support_request'));
+        this.app.use('/posts', (require('../routes/post')));
+        this.app.use('/support_requests', require('../routes/support_request'));
     }
 
     start(){

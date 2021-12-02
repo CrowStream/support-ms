@@ -196,11 +196,13 @@ const create_post_comment = (req = request, res = response) => {
             }else{
                 post.comments.push(req.body);
                 post.save();
-                create_task('comment.creation', 'comment.creation', 'comment.creation', {
-                    to: "rcalvom@unal.edu.co",
-                    subject: "Test EMAIL",
-                    html: "<h1>Hello EMAIL!</h1>"
-                });
+                if(req.body.email != undefined){
+                    create_task('comment.creation', 'comment.creation', 'comment.creation', {
+                        to: req.body.email,
+                        subject: "Han comentado tu publicación",
+                        html: "<h1>Han comentado tu publicación, Revisa la plataforma.</h1>"
+                    });
+                }
                 res.status(200).json(
                     post.comments.at(-1)
                 );
@@ -344,7 +346,7 @@ const update_post_file = (req = request, res = response) => {
 }
 
 const remove_post = (req = request, res = response) => {
-    Post.findByIdAndDelete(req.params.id)
+    Post.findByIdAndDelete(req.params.id_post)
         .then((post) => {
             if(post == null){
                 res.status(204).json();

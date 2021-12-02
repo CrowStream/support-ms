@@ -15,10 +15,6 @@ const SupportRequestSchema = Schema({
         required: [true, 'description must be provided']
     },
     response_id: {
-        request_id: {
-            type: Schema.Types.ObjectId,
-            ref: 'SupportRequest'
-        },
         responder: {
             type: String,
         },

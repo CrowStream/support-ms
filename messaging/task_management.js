@@ -1,6 +1,6 @@
 const amqplib = require('amqplib');
 const { callbackPromise } = require('nodemailer/lib/shared');
-const { mqConnection } = require('../messaging/config');
+
 
 const create_task = async (exchange, queue, routingKey, msg) => {
     const connection = await amqplib.connect(process.env.CROWSTREAM_MQ_URL, 'heartbeat=60');
@@ -18,6 +18,7 @@ const create_task = async (exchange, queue, routingKey, msg) => {
         console.info('Channel and connection closed');
     }
 }
+
 
 const read_task = async (queue, consumerTag, processMessage) => {
     const connection = await amqplib.connect(process.env.CROWSTREAM_MQ_URL, 'heartbeat=60');
