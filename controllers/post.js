@@ -1,7 +1,7 @@
 const { request, response } = require('express');
 const Post = require('../models/post');
 const { create_task } = require('../messaging/task_management');
-
+const uuid = require('uuid');
 
 const get_all_posts = (req = request, res = response) => {
     var filters = {}
@@ -21,9 +21,7 @@ const get_post = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 res.status(200).json(
                     post
@@ -46,9 +44,7 @@ const get_post_comments = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 res.status(200).json(
                     post.comments
@@ -71,9 +67,7 @@ const get_post_comment = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < post.comments.length; i++){
@@ -85,9 +79,7 @@ const get_post_comment = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -107,9 +99,7 @@ const get_post_files = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 res.status(200).json(
                     post.files
@@ -132,9 +122,7 @@ const get_post_file = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < post.files.length; i++){
@@ -146,9 +134,7 @@ const get_post_file = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -165,6 +151,21 @@ const get_post_file = (req = request, res = response) => {
 }
 
 const create_post = (req = request, res = response) => {
+    var post = req.body;
+    if(post.files != undefined){
+        for(var i = 0; i < post.files.length; i++){
+            file = post.files[i];
+            split = file.split('.')
+            extention = split.at(-1);
+            filename = uuid.v4();
+            create_task('file.upload', 'file.upload', 'file.upload', {
+                bucketName: process.env.GOOGLE_CROWSTREAM_BUCKET_NAME,
+                base64File: (split.slice(0, split.length - 1)).join('.'),
+                destFileName: `PostFiles/${filename}.${extention}`
+            });  
+            post.files[i] = `${process.env.GOOGLE_CROWSTREAM_BUCKET_PATH}PostFiles/${filename}.${extention}`;
+        }
+    }
     Post.create(req.body)
         .then((post) => {
             Post.findById(post._id)
@@ -187,12 +188,25 @@ const create_post = (req = request, res = response) => {
 }
 
 const create_post_comment = (req = request, res = response) => {
+    var comment = req.body;
+    if(comment.files != undefined){
+        for(var i = 0; i < comment.files.length; i++){
+            file = comment.files[i];
+            split = file.split('.')
+            extention = split.at(-1);
+            filename = uuid.v4();
+            create_task('file.upload', 'file.upload', 'file.upload', {
+                bucketName: process.env.GOOGLE_CROWSTREAM_BUCKET_NAME,
+                base64File: (split.slice(0, split.length - 1)).join('.'),
+                destFileName: `CommentFiles/${filename}.${extention}`
+            });  
+            comment.files[i] = `${process.env.GOOGLE_CROWSTREAM_BUCKET_PATH}CommentFiles/${filename}.${extention}`;
+        }
+    }
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 post.comments.push(req.body);
                 post.save();
@@ -224,9 +238,7 @@ const create_post_file = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 post.files.push(req.body);
                 post.save();
@@ -273,9 +285,7 @@ const update_post_comment = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < post.comments.length; i++){
@@ -289,9 +299,7 @@ const update_post_comment = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -311,9 +319,7 @@ const update_post_file = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < post.files.length; i++){
@@ -327,9 +333,7 @@ const update_post_file = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -351,9 +355,7 @@ const remove_post = (req = request, res = response) => {
             if(post == null){
                 res.status(204).json();
             }else{
-                res.status(400).json({
-                    "msg": "Element not found"
-                });
+                res.status(400).json({});
             }
         }).catch((err) =>{
             if(err.name == 'CastError'){
@@ -372,9 +374,7 @@ const remove_post_comment = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < post.comments.length; i++){
@@ -386,9 +386,7 @@ const remove_post_comment = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -408,9 +406,7 @@ const remove_post_files = (req = request, res = response) => {
     Post.findById(req.params.id_post)
         .then((post) => {
             if(post == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < post.files.length; i++){
@@ -422,9 +418,7 @@ const remove_post_files = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{

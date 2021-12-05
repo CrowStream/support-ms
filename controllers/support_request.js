@@ -1,5 +1,7 @@
 const { request, response } = require('express');
+const uuid = require('uuid');
 const Support_request = require('../models/support_request');
+const { create_task } = require('../messaging/task_management');
 
 
 const get_all_support_requests = (req = request, res = response) => {
@@ -20,9 +22,7 @@ const get_support_request = (req = request, res = response) => {
     Support_request.findById(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 res.status(200).json(
                     support_request
@@ -45,9 +45,7 @@ const get_support_request_files = (req = request, res = response) => {
     Support_request.findById(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 res.status(200).json(
                     support_request.files
@@ -70,9 +68,7 @@ const get_support_request_file = (req = request, res = response) => {
     Support_request.findById(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < support_request.files.length; i++){
@@ -84,9 +80,7 @@ const get_support_request_file = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -103,6 +97,21 @@ const get_support_request_file = (req = request, res = response) => {
 }
 
 const create_support_request = (req = request, res = response) => {
+    var support_request = req.body;
+    if(support_request.files != undefined){
+        for(var i = 0; i < support_request.files.length; i++){
+            file = support_request.files[i];
+            split = file.split('.')
+            extention = split.at(-1);
+            filename = uuid.v4();
+            create_task('file.upload', 'file.upload', 'file.upload', {
+                bucketName: process.env.GOOGLE_CROWSTREAM_BUCKET_NAME,
+                base64File: (split.slice(0, split.length - 1)).join('.'),
+                destFileName: `SupportRequestFiles/${filename}.${extention}`
+            });  
+            support_request.files[i] = `${process.env.GOOGLE_CROWSTREAM_BUCKET_PATH}SupportRequestFiles/${filename}.${extention}`;
+        }
+    }
     Support_request.create(req.body)
         .then((support_request) => {
             Support_request.findById(support_request._id)
@@ -128,9 +137,7 @@ const create_support_request_file = (req = request, res = response) => {
     Support_request.findById(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 support_request.files.push(req.body);
                 support_request.save();
@@ -177,9 +184,7 @@ const update_support_request_file = (req = request, res = response) => {
     Support_request.findById(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < support_request.files.length; i++){
@@ -193,9 +198,7 @@ const update_support_request_file = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
@@ -215,9 +218,7 @@ const remove_support_request = (req = request, res = response) => {
     Support_request.findByIdAndDelete(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"
-                });
+                res.status(400).json({});
             }else{
                 res.status(204).json();
             }
@@ -238,9 +239,7 @@ const remove_support_request_files = (req = request, res = response) => {
     Support_request.findById(req.params.id_support_request)
         .then((support_request) => {
             if(support_request == null){
-                res.status(400).json({
-                    "msg": "Element not found"                    
-                });
+                res.status(400).json({});
             }else{
                 var flag = false;
                 for(var i = 0; i < support_request.files.length; i++){
@@ -252,9 +251,7 @@ const remove_support_request_files = (req = request, res = response) => {
                     }
                 }
                 if(!flag){
-                    res.status(400).json({
-                        "msg": "Element not found"                    
-                    });
+                    res.status(400).json({});
                 }
             }
         }).catch((err) =>{
