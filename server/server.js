@@ -3,6 +3,8 @@ const express = require('express');
 const { dbConnection } = require('../database/config');
 const { read_task, create_task } = require('../messaging/task_management');
 const { comment_notification } = require('../tasks/comment_notification');
+const { upload_file_task } = require('../tasks/upload_file');
+
 
 class Server {
     constructor(){
@@ -46,6 +48,9 @@ class Server {
     tasks(){
         // Read Email Notification Task.
         read_task('comment.creation', 'comment.creation', comment_notification);
+
+        // Read Upload File Task.
+        read_task('file.upload', 'file.upload', upload_file_task);
     }
 
 }
