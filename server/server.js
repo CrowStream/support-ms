@@ -1,5 +1,6 @@
 const ping = require('express-ping');
 const express = require('express');
+const cors = require('cors');
 const { dbConnection } = require('../database/config');
 const { read_task, create_task } = require('../messaging/task_management');
 const { comment_notification } = require('../tasks/comment_notification');
@@ -26,6 +27,7 @@ class Server {
     }
 
     middlewares(){
+        this.app.use(cors());
         this.app.use(express.json());
     }
 
