@@ -10,6 +10,10 @@ const SupportRequestSchema = Schema({
         required: [true, 'request_type must be provided'],
         enum: ['COMPLAIN', 'DOUBT', 'SUGGESTION', 'CLAIM']
     },
+    title: {
+        type: String,
+        required: [true, 'title must be provided']
+    },
     description: {
         type: String,
         required: [true, 'description must be provided']
