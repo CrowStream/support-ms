@@ -21,6 +21,9 @@ const PostSchema = Schema({
             type: String,
             require: [true, 'user_id must be provided']
         },
+        user_nick: {
+            type: String
+        },
         description: {
             type: String,
             require: [true, 'description must be provided']
